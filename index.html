@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Encoder & Decoder (English/Bangla)</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #f3f4f6;
+        margin: 0;
+    }
+    h1 {
+        color: #000;
+        margin-bottom: 20px;
+        font-family: 'Nosifer', cursive;
+        font-size: 2.5em;
+        text-shadow: 0 0 10px rgba(255,255,255,0.8),
+                     0 0 20px rgba(255,255,255,0.6),
+                     0 0 30px rgba(255,255,255,0.4),
+                     0 0 40px rgba(200,200,200,0.3);
+        letter-spacing: 3px;
+        animation: shineEffect 2s ease-in-out infinite;
+    }
+    h5 {
+        color: #333;
+        font-weight: bold;
+    }
+    @keyframes shineEffect {
+        0%, 100% {
+            text-shadow: 0 0 10px rgba(255,255,255,0.8),
+                         0 0 20px rgba(255,255,255,0.6),
+                         0 0 30px rgba(255,255,255,0.4),
+                         0 0 40px rgba(200,200,200,0.3);
+        }
+        50% {
+            text-shadow: 0 0 20px rgba(255,255,255,1),
+                         0 0 30px rgba(255,255,255,0.8),
+                         0 0 40px rgba(255,255,255,0.6),
+                         0 0 50px rgba(200,200,200,0.5),
+                         0 0 60px rgba(150,150,150,0.3);
+        }
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 320px;
+        background: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 5px 5px 10px #b8bcc2, -5px -5px 10px #ffffff;
+    }
+    select {
+        padding: 12px 15px;
+        border: none;
+        border-radius: 12px;
+        background: #ebe5ec;
+        box-shadow: inset 5px 5px 10px #b8bcc2, inset -5px -5px 10px #ffffff;
+        outline: none;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    textarea.input {
+        padding: 12px 15px;
+        border: none;
+        border-radius: 12px;
+        background: #ebe5ec;
+        box-shadow: inset 5px 5px 10px #b8bcc2, inset -5px -5px 10px #ffffff;
+        outline: none;
+        font-size: 14px;
+        resize: none;
+        height: 100px;
+    }
+    .button {
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: #ebe5ec;
+        box-shadow: 5px 5px 10px #b8bcc2, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    .button:hover {
+        background: #dcd6de;
+        transform: scale(1.03);
+    }
+    .output {
+        padding: 12px 15px;
+        border-radius: 12px;
+        background: #f9f9fb;
+        font-size: 14px;
+        min-height: 80px;
+        box-shadow: inset 5px 5px 10px #b8bcc2, inset -5px -5px 10px #ffffff;
+        word-wrap: break-word;
+    }
+    /* Action buttons (Copy & Clear) */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    .action-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: #ebe5ec;
+        box-shadow: 5px 5px 10px #b8bcc2, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s ease;
+    }
+    .action-btn:hover {
+        background: #dcd6de;
+        transform: scale(1.03);
+    }
+    /* Footer icon styling */
+    .footer-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+    }
+    .footer-icon img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+        animation: rgbGlow 3s linear infinite;
+    }
+    .footer-icon img:hover {
+        transform: scale(1.1);
+    }
+    @keyframes rgbGlow {
+        0% {
+            filter: drop-shadow(0 0 10px rgb(255, 0, 0));
+        }
+        33% {
+            filter: drop-shadow(0 0 10px rgb(0, 255, 0));
+        }
+        66% {
+            filter: drop-shadow(0 0 10px rgb(0, 0, 255));
+        }
+        100% {
+            filter: drop-shadow(0 0 10px rgb(255, 0, 0));
+        }
+    }
+</style>
+</head>
+<body>
+    <h1>Text Encoder & Decoder</h1>
+    <h5>Developed by Md:HR</h5>
+    <div class="container">
+        <select id="encodingMethod">
+            <option value="base64">Base64</option>
+            <option value="url">URL Encoding</option>
+            <option value="hex">Hexadecimal</option>
+            <option value="binary">Binary</option>
+        </select>
+        <textarea class="input" id="textInput" placeholder="Enter English or Bangla text..."></textarea>
+        <button class="button" onclick="encodeText()">🔒 Encode</button>
+        <button class="button" onclick="decodeText()">🔓 Decode</button>
+        <div class="output" id="outputBox">Output will appear here...</div>
+        
+        <!-- Copy & Clear buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="copyOutput()">📋 Copy</button>
+            <button class="action-btn" onclick="clearAll()">🗑️ Clear</button>
+        </div>
+    </div>
+    
+    <a class="footer-icon" href="https://t.me/Termux_Team_BD_0" target="_blank" title="Join us on Telegram">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram Icon">
+    </a>
+    
+<script>
+function encodeText() {
+    const input = document.getElementById('textInput').value;
+    const method = document.getElementById('encodingMethod').value;
+    
+    if (input.trim() === "") {
+        alert("Please enter text to encode.");
+        return;
+    }
+    
+    try {
+        let encoded;
+        switch(method) {
+            case 'base64':
+                encoded = btoa(unescape(encodeURIComponent(input)));
+                break;
+            case 'url':
+                encoded = encodeURIComponent(input);
+                break;
+            case 'hex':
+                encoded = Array.from(input).map(c => 
+                    c.charCodeAt(0).toString(16).padStart(2, '0')
+                ).join('');
+                break;
+            case 'binary':
+                encoded = Array.from(input).map(c => 
+                    c.charCodeAt(0).toString(2).padStart(8, '0')
+                ).join(' ');
+                break;
+        }
+        document.getElementById('outputBox').innerText = encoded;
+    } catch (e) {
+        alert("Encoding failed!");
+    }
+}
+
+function decodeText() {
+    const input = document.getElementById('textInput').value;
+    const method = document.getElementById('encodingMethod').value;
+    
+    if (input.trim() === "") {
+        alert("Please enter text to decode.");
+        return;
+    }
+    
+    try {
+        let decoded;
+        switch(method) {
+            case 'base64':
+                decoded = decodeURIComponent(escape(atob(input)));
+                break;
+            case 'url':
+                decoded = decodeURIComponent(input);
+                break;
+            case 'hex':
+                decoded = input.match(/.{1,2}/g).map(hex => 
+                    String.fromCharCode(parseInt(hex, 16))
+                ).join('');
+                break;
+            case 'binary':
+                decoded = input.split(' ').map(bin => 
+                    String.fromCharCode(parseInt(bin, 2))
+                ).join('');
+                break;
+        }
+        document.getElementById('outputBox').innerText = decoded;
+    } catch (e) {
+        alert("Invalid encoded text!");
+    }
+}
+
+function copyOutput() {
+    const outputBox = document.getElementById('outputBox');
+    const text = outputBox.innerText;
+    
+    if (text === "Output will appear here..." || text.trim() === "") {
+        alert("Nothing to copy!");
+        return;
+    }
+    
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+    }).catch(() => {
+        alert("Failed to copy!");
+    });
+}
+
+function clearAll() {
+    document.getElementById('textInput').value = '';
+    document.getElementById('outputBox').innerText = 'Output will appear here...';
+}
+</script>
+</body>
+</html>
